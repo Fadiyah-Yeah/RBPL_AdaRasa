@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengaturan Akun</title>
+<link href="https://fonts.googleapis.com/css2?family=Aleo:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: 'Aleo', serif;
+}
+
+body {
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+}
+
+.mobile-container {
+    width: 100%;
+    max-width: 390px;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.back {
+    font-size: 22px;
+    cursor: pointer;
+    color: #000000;
+    text-decoration: none;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Section Title */
+.section-title {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* Menu List */
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    cursor: pointer;
+}
+
+.menu-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #000000;
+    text-decoration: none;
+}
+
+.icon {
+    font-size: 16px;
+    width: 22px;
+    text-align: center;
+}
+
+.menu-text {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.arrow {
+    font-size: 18px;
+}
+
+.menu-item:hover {
+    opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<div class="mobile-container">
+
+    <div class="header">
+        <a class="back" href="../Pages/admin.html">&#8592;</a>
+        <div class="title">Pengaturan Akun</div>
+    </div>
+
+    <div class="menu-item">
+        <a class="menu-left" href="../Component/ganti_UN.php">
+            <div class="icon">👤</div>
+            <div class="menu-text">Ganti Username</div>
+        </a>
+        <div class="arrow">&#8250;</div>
+    </div>
+
+    <div class="menu-item">
+        <a class="menu-left" href="../Component/ganti_PW.php">
+            <div class="icon">🔒</div>
+            <div class="menu-text">Ganti Password</div>
+        </a>
+        <div class="arrow">&#8250;</div>
+    </div>
+
+    <div class="menu-item">
+        <a class="menu-left" href="../Component/edit_profil.php">
+            <div class="icon">✏️</div>
+            <div class="menu-text">Edit Profil</div>
+        </a>
+        <div class="arrow">&#8250;</div>
+    </div>
+
+    <div class="menu-item">
+        <div class="menu-left">
+            <div class="icon">🚪</div>
+            <div class="menu-text">Log Out</div>
+        </div>
+        <div class="arrow">&#8250;</div>
+    </div>
+
+    <div class="section-title">Info Lainnya</div>
+
+    <div class="menu-item">
+        <div class="menu-left">
+            <div class="icon">ℹ️</div>
+            <div class="menu-text">Tentang</div>
+        </div>
+        <div class="arrow">&#8250;</div>
+    </div>
+
+    <div class="menu-item">
+        <div class="menu-left">
+            <div class="icon">✔️</div>
+            <div class="menu-text">Kebijakan Privasi</div>
+        </div>
+        <div class="arrow">&#8250;</div>
+    </div>
+
+</div>
+
+</body>
+</html>
