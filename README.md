@@ -75,19 +75,6 @@ Current version focuses on front-end structure and workflow simulation.
 
 ---
 
-## 📂 Project Structure
-/RBPL_AdaRasa
-│
-|__/Component
-| └──
-│
-├── /Pages
-│ └── 
-│
-└── /asset
-
----
-
 ## 🎯 Learning Objectives Achieved
 
 Through this project, the following competencies were implemented:
@@ -97,17 +84,6 @@ Through this project, the following competencies were implemented:
 - Structuring operational workflows
 - Developing consistent and reusable UI components
 - Applying software engineering principles into web development
-
----
-
-## 🔮 Future Development Plan
-
-- Backend integration (Node.js / PHP / Laravel)
-- Database integration (MySQL / PostgreSQL)
-- Role-based authentication system
-- Order tracking automation
-- Sales and inventory analytics dashboard
-- Report export (PDF)
 
 ---
 
