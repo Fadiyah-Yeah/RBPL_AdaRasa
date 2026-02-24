@@ -1,76 +1,66 @@
 # 🍽️ Catering Management Information System
-### Web-Based Catering Operational Management Platform
+### Software Engineering Course Project – Rancang Bangun Perangkat Lunak
 
-A web-based Catering Management Information System designed to streamline catering operations, improve team coordination, and manage orders and raw materials efficiently.
+This project is developed as part of the **Software Engineering (Rancang Bangun Perangkat Lunak)** course.
 
-Built with a mobile-first approach and clean UI design to simulate a real-world operational system.
+The system is a web-based Catering Management Information System designed to simulate real-world operational workflows in a catering business.
 
----
-
-## 🚀 Project Overview
-
-This system digitizes catering business workflows by dividing responsibilities into three main operational roles:
-
-- 👑 Admin
-- 👨‍🍳 Kitchen Team
-- 🚚 Delivery Team
-
-The platform is designed to reduce manual tracking, improve order visibility, and optimize ingredient management.
+It focuses on system modeling, role separation, UI structure, and business process implementation.
 
 ---
 
-## 👥 System Roles & Capabilities
+## 📚 Course Context
 
-### 👑 Admin Dashboard
-The Admin acts as the system controller with full access to operational features:
+This project demonstrates the application of software engineering concepts including:
 
-- 📊 Dashboard Overview  
-  - Daily order summary  
-  - Recent orders list  
-  - Raw material stock checklist  
-
-- 📦 Raw Material Management  
-  - Input new ingredients  
-  - Monitor stock availability  
-
-- 📋 Order Management  
-  - View incoming orders  
-  - Track processing status  
-
-- 📈 Reports Page  
-
-- ⚙️ Account Settings  
-  - Change Username  
-  - Change Password  
-  - Edit Profile  
-
-- 🔎 Empty State UI (Not Found Page)
+- System requirement analysis
+- Role-based system design
+- Business process modeling
+- Interface prototyping
+- Structured feature development
 
 ---
 
-### 👨‍🍳 Kitchen Team
-- View assigned orders
-- See order details and quantities
+## 👥 System Actors
+
+The system consists of three main actors:
+
+### 👑 1. Admin
+Responsible for managing the entire operational system.
+
+**Features:**
+- Dashboard overview (daily orders & stock summary)
+- Raw material management
+- Order monitoring
+- Reports page
+- Account management (change username, password, edit profile)
+- Empty state page (Not Found UI)
+
+---
+
+### 👨‍🍳 2. Kitchen Team
+- View incoming orders
+- Check menu details and quantities
 - Update order status (Processing / Completed)
 
 ---
 
-### 🚚 Delivery Team
+### 🚚 3. Delivery Team
 - View ready-to-deliver orders
-- Access customer address details
+- Access customer address information
 - Update delivery status
 
 ---
 
-## 🎨 UI & Design Principles
+## 🎨 UI & Design Approach
 
-- Mobile-first layout (max-width: 390px)
+- Mobile-first responsive layout
 - Clean and minimal interface
 - Soft color palette
-- Simple and intuitive navigation
-- Consistent typography using **Google Font: Aleo**
+- Consistent typography using Google Font (Aleo)
+- User-centered navigation structure
 
-The interface is designed to simulate a real mobile business management application.
+The UI simulates a real operational dashboard for catering management.
 
 ---
 
@@ -81,8 +71,53 @@ The interface is designed to simulate a real mobile business management applicat
 - Google Fonts (Aleo)
 - Responsive Web Design
 
-This version focuses on front-end UI structure and system flow simulation.
+Current version focuses on front-end structure and workflow simulation.
 
 ---
 
 ## 📂 Project Structure
+/RBPL_AdaRasa
+│
+|__/Component
+| └──
+│
+├── /Pages
+│ └── 
+│
+└── /asset
+
+---
+
+## 🎯 Learning Objectives Achieved
+
+Through this project, the following competencies were implemented:
+
+- Designing multi-role system architecture
+- Translating business processes into system features
+- Structuring operational workflows
+- Developing consistent and reusable UI components
+- Applying software engineering principles into web development
+
+---
+
+## 🔮 Future Development Plan
+
+- Backend integration (Node.js / PHP / Laravel)
+- Database integration (MySQL / PostgreSQL)
+- Role-based authentication system
+- Order tracking automation
+- Sales and inventory analytics dashboard
+- Report export (PDF)
+
+---
+
+## 📌 Project Status
+
+Academic Project – UI Prototype  
+Developed for Software Engineering coursework.
+
+---
+
+## 👩‍💻 Author
+
+Developed as part of the Information Systems undergraduate program.
