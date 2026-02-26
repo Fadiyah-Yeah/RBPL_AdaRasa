@@ -1,45 +1,77 @@
 <?php
-include "konek.php";
 session_start();
+require 'functions.php';
 
-if(isset($_COOKIE['id']) && isset($_COOKIE['username'])){
-    $id = $_COOKIE['id'];
-    $username = $_COOKIE['username'];
+function redirectByRole($role) {
+    if ($role === "admin") {
+        header("location: ../Pages/admin.html");
+    } elseif ($role === "dapur") {
+        header("location: ../Pages/dapur.html");
+    } elseif ($role === "pengantaran") {
+        header("location: ../Pages/antar.html");
+    } else {
+        header("location: ../Pages/not_found.html");
+    }
+    exit;
+}
 
-    $result = mysqli_query($konek, "SELECT * FROM users WHERE id = '$id'");
-    $_row = mysqli_fetch_assoc($result);
+if (isset($_COOKIE['k']) && isset($_COOKIE['x'])) {
 
-    if($username === hash('sha256', $row['username']) ){
+    $idUser = $_COOKIE['k'];
+    $kodeUser = $_COOKIE['x'];
+
+    $stmt = mysqli_prepare($conn, "SELECT username, role FROM user WHERE a = ?");
+    mysqli_stmt_bind_param($stmt, "i", $idUser);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $dataUser = mysqli_fetch_assoc($result);
+
+    if ($dataUser && $kodeUser === hash('sha256', $dataUser['username'])) {
         $_SESSION['login'] = true;
+        $_SESSION['role'] = $dataUser['role'];
+        redirectByRole($dataUser['role']);
     }
 }
 
-if(isset($_POST["login"])){
+if (isset($_SESSION["login"])) {
+    redirectByRole($_SESSION['role']);
+}
+
+if (isset($_POST["login"])) {
+
     $username = $_POST["username"];
     $password = $_POST["password"];
+    $email    = $_POST["email"];
 
-    $result = mysqli_query($conn, "SELECT * FROM users WHERE username = '$username'");
+    $stmt = mysqli_prepare($conn, "SELECT * FROM user WHERE username = ?");
+    mysqli_stmt_bind_param($stmt, "s", $username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-    if (mysqli_num_rows($result) == 1){ 
-        $row = mysqli_fetch_assoc($result);
+    if (mysqli_num_rows($result) === 1) {
 
-        if(password_verify($password, $row["password"])) {
-            $_SESSION["login"] = true;
+        $data = mysqli_fetch_assoc($result);
 
-            if(isset($_POST["login"])){
-                setcookie('id', $row['id'], time()+120);
-                setcookie('username',hash('sha256', $row['username']), time()+120);
+        if ($email === $data["email"]) {
+
+            if (password_verify($password, $data["password"])) {
+
+                $_SESSION["login"] = true;
+                $_SESSION["role"]  = $data["role"];
+                $_SESSION["id"]    = $data["a"];
+
+                if (isset($_POST['remember'])) {
+                    setcookie('k', $data['a'], time() + 60 * 60, "/", "", false, true);
+                    setcookie('x', hash('sha256', $data['username']), time() + 60 * 60, "/", "", false, true);
+                }
+
+                redirectByRole($data['role']);
             }
-            header("Location: Admin.php");
-            exit;
-        };
+        }
     }
 
-    echo "<script>
-    alert('username/password salah mint')
-</script>";
+    $error = true;
 }
-
 ?>
 
 <!DOCTYPE html>
