@@ -73,7 +73,7 @@ The UI simulates a real operational dashboard for catering management.
 
 Current version focuses on front-end structure and workflow simulation.
 
----
+---~~~~~
 
 ## 🎯 Learning Objectives Achieved
 
