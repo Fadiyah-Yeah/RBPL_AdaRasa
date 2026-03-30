@@ -1,58 +1,73 @@
 <?php
-include "koneksi.php";
+include "konek.php";
 
 if(isset($_POST["register"])) {
-    $username = strtolower($_POST["username"]);
-    $password = $_POST["password"];
+
+    $username  = strtolower(trim($_POST["username"]));
+    $password  = $_POST["password"];
     $password2 = $_POST["password2"];
+    $role      = $_POST["role"];
 
-    // cek konfirmasi password apakah benar
     if($password != $password2){
-        echo "<script>
-            alert('input password tidak sesuai')
-        </script>";
+        echo "<script>alert('Konfirmasi password tidak sesuai');</script>";
     } else {
-        // misalnya password bener -> masukin ke db
 
-        // enkripsii
-        $password = password_hash($password, PASSWORD_DEFAULT);
-
-        // masukin ke db
-        $query = "INSERT INTO users (username, password) VALUES ('$username', '$password')";
-        $q = mysqli_query($conn, $query);
-
-        if($q) {
-            echo "<script>
-            alert('user berhasil ditambahkan')
-        </script>";
+        // cek username sudah ada atau belum
+        $cek = mysqli_query($conn, "SELECT username FROM users WHERE username = '$username'");
+        if(mysqli_num_rows($cek) > 0){
+            echo "<script>alert('Username sudah digunakan');</script>";
         } else {
-            echo "<script>
-            alert('user gagal ditambahkan')
-        </script>";
-        }
 
+            // hash password
+            $password = password_hash($password, PASSWORD_DEFAULT);
+
+            // insert ke database
+            $query = "INSERT INTO users (username, password, role) 
+                      VALUES ('$username', '$password', '$role')";
+            $q = mysqli_query($conn, $query);
+
+            if($q) {
+                echo "<script>
+                        alert('User berhasil ditambahkan');
+                        window.location='login.php';
+                      </script>";
+            } else {
+                echo "<script>alert('User gagal ditambahkan');</script>";
+            }
+        }
     }
 }
 ?>
 
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Akun</title>
+    <title>Registrasi Akun</title>
 </head>
 <body>
-   <form action="" method="post">
-        <h1>Registrasi Akun</h1>
-        <label for="username">Username</label>
-        <input type="text" name="username" id=username> <br>
-        <label for="password">Password</label>
-        <input type="password" name="password" id=password> <br>
-        <label for="password2">Konfirmasi Password</label>
-        <input type="password" name="password2" id=password2> <br>
-        <input type="submit" value="register" name="register">
-    </form> 
+
+<form method="post">
+    <h1>Registrasi Akun</h1>
+
+    <label>Username</label><br>
+    <input type="text" name="username" required><br><br>
+
+    <label>Password</label><br>
+    <input type="password" name="password" required><br><br>
+
+    <label>Konfirmasi Password</label><br>
+    <input type="password" name="password2" required><br><br>
+
+    <label>Role</label><br>
+    <select name="role" required>
+        <option value="">-- Pilih Role --</option>
+        <option value="admin">Admin</option>
+        <option value="dapur">Dapur</option>
+        <option value="pengantaran">Pengantaran</option>
+    </select><br><br>
+
+    <input type="submit" name="register" value="Register">
+</form>
+
 </body>
 </html>
