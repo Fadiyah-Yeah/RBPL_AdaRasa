@@ -1,75 +1,73 @@
 <?php
 session_start();
-require 'functions.php';
 
-function redirectByRole($role) {
-    if ($role === "admin") {
-        header("location: ../Pages/admin.html");
-    } elseif ($role === "dapur") {
-        header("location: ../Pages/dapur.html");
-    } elseif ($role === "pengantaran") {
-        header("location: ../Pages/antar.html");
-    } else {
-        header("location: ../Pages/not_found.html");
-    }
-    exit;
-}
+require 'konek.php';
 
+// cek apakah ada cookie
 if (isset($_COOKIE['k']) && isset($_COOKIE['x'])) {
+    $a = $_COOKIE['k'];
+    $x = $_COOKIE['x'];
 
-    $idUser = $_COOKIE['k'];
-    $kodeUser = $_COOKIE['x'];
+    // ambil username berdasarkan id
+    $result = mysqli_query($conn, "SELECT username FROM user WHERE a = $a");
+    $row = mysqli_fetch_assoc($result);
 
-    $stmt = mysqli_prepare($conn, "SELECT username, role FROM user WHERE a = ?");
-    mysqli_stmt_bind_param($stmt, "i", $idUser);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $dataUser = mysqli_fetch_assoc($result);
-
-    if ($dataUser && $kodeUser === hash('sha256', $dataUser['username'])) {
+    // cek cookie dan username
+    if ($x === hash('sha256', $row['username'])) {
         $_SESSION['login'] = true;
-        $_SESSION['role'] = $dataUser['role'];
-        redirectByRole($dataUser['role']);
     }
 }
 
+// cek apakah sudah login ga usah balik ke login
 if (isset($_SESSION["login"])) {
-    redirectByRole($_SESSION['role']);
+    if ($_SESSION['role'] == 'admin') {
+        header("location:../Pages/admin.html");
+    } else if ($_SESSION['role'] == 'dapur') {
+        header("location:../Pages/dapur.html");
+    } else if ($_SESSION['role'] == 'pengantaran') {
+        header("location:../Pages/antar.html");
+    }
 }
 
+// cek apakah tombol login sudah diklik
 if (isset($_POST["login"])) {
-
     $username = $_POST["username"];
     $password = $_POST["password"];
-    $email    = $_POST["email"];
 
-    $stmt = mysqli_prepare($conn, "SELECT * FROM user WHERE username = ?");
-    mysqli_stmt_bind_param($stmt, "s", $username);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+    $result = mysqli_query($conn, "SELECT * FROM users 
+    WHERE username = '$username'");
 
+    // cek apakah username ada di database
+    // menghitung ada berapa baris dari fungsi select
+    // jika ada maka bernilai 1, jika tidak ada maka 0
     if (mysqli_num_rows($result) === 1) {
-
-        $data = mysqli_fetch_assoc($result);
-
-        if ($email === $data["email"]) {
-
-            if (password_verify($password, $data["password"])) {
-
+        
+        $row = mysqli_fetch_assoc($result); // dalam row akan sudah ada datanya
+        if ($username === $row["username"]) {
+            // cek string sama atau tidak dengan hash nya
+            if (password_verify($password, $row["password"])) {
+                // set session
                 $_SESSION["login"] = true;
-                $_SESSION["role"]  = $data["role"];
-                $_SESSION["id"]    = $data["a"];
+                $_SESSION['role'] = $row['role'];
+                $_SESSION['username'] = $row['username']; 
 
-                if (isset($_POST['remember'])) {
-                    setcookie('k', $data['a'], time() + 60 * 60, "/", "", false, true);
-                    setcookie('x', hash('sha256', $data['username']), time() + 60 * 60, "/", "", false, true);
+                if ($row['role'] == 'admin') {
+                    header("location:../Pages/admin.html");
+                } else if ($row['role'] == 'dapur') {
+                    header("location:../Pages/dapur.html");
+                } else if ($row['role'] == 'pengantaran') {
+                    header("location:../Pages/antar.html");
                 }
+                exit;
 
-                redirectByRole($data['role']);
+                // cek cookies remember me
+                if (isset($_POST['remember'])) {
+                    setcookie('k', $row['a'], time() + 60 * 60);
+                    setcookie('x', hash('sha256', $row['username']), time() + 60 * 60);
+                }
             }
         }
     }
-
     $error = true;
 }
 ?>
@@ -79,83 +77,96 @@ if (isset($_POST["login"])) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login UI</title>
+<title>Login</title>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, Helvetica, sans-serif;
-    }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-    body {
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #ffffff; 
-    }
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5;
+}
 
-    .login-container {
-        background: #ffffff;
-        padding: 30px;
-        width: 320px;
-        border: 1px solid #000;
-        border-radius: 8px;
-    }
+.login-container {
+    background: #ffffff;
+    padding: 30px;
+    width: 320px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
 
-    .login-container label {
-        font-size: 14px;
-        margin-bottom: 6px;
-        display: block;
-        color: #333;
-    }
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-    .login-container input {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 18px;
-        border-radius: 6px;
-        border: 1px solid #000000;
-        background-color: #ffffff;
-        outline: none;
-        transition: 0.3s;
-    }
+.login-container label {
+    font-size: 14px;
+    margin-bottom: 6px;
+    display: block;
+}
 
-    .login-container input:focus {
-        border-color: #000;
-        background-color: #fff;
-    }
+.login-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 18px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+}
 
-    .login-container button {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 6px;
-        background-color: #000;
-        color: #fff;
-        font-size: 14px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
+.login-container input:focus {
+    border-color: #000;
+}
 
-    .login-container button:hover {
-        background-color: #959494;
-    }
+.login-container button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #000;
+    color: #fff;
+    cursor: pointer;
+}
+
+.login-container button:hover {
+    background-color: #444;
+}
+
+.error {
+    color: red;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: center;
+}
 </style>
 </head>
+
 <body>
 
 <div class="login-container">
-    <form>
+    <h2>Login</h2>
+
+    <?php if (isset($error)) : ?>
+        <div class="error"><?= $error; ?></div>
+    <?php endif; ?>
+
+    <form method="POST">
         <label>Username</label>
-        <input type="text" placeholder="Value">
+        <input type="text" name="username" required>
 
         <label>Password</label>
-        <input type="password" placeholder="Value">
+        <input type="password" name="password" required>
 
-        <button type="submit">Login</button>
+        <button type="submit" name="login">Login</button>
     </form>
 </div>
 
