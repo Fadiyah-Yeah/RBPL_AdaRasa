@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root";
 $pass = "";
-$db = "";
+$db = "ada_rasa";
 
 $conn = mysqli_connect($host, $user, $pass, $db); 
 
