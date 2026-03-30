@@ -97,8 +97,10 @@
 <div class="wrapper">
 
     <div class="header">
+        <a href="../Pages/Pengaturan.html">
         <div class="back">&#8592;</div>
         <div class="title">Ganti Password</div>
+        </a>
     </div>
 
     <div class="card">
