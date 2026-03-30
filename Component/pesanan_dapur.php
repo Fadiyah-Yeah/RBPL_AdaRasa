@@ -208,12 +208,13 @@ if ($allowed) {
         loadData('diterima', document.querySelector('.tab'));
 
         const urlParams = new URLSearchParams(window.location.search);
-        const highlightId = urlParams.get('highlight');
+const highlightId = urlParams.get('highlight');
 
         const isHighlight = item.id == highlightId;
 
         container.innerHTML += `
-  <div class="card ${isHighlight ? 'highlight' : ''}">`;
+  <div class="card ${isHighlight ? 'highlight' : ''}">
+`;
     </script>
 
 </body>
