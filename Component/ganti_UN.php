@@ -30,7 +30,8 @@
         align-items: center;
         gap: 12px;
         margin-bottom: 40px;
-        color: #333;
+        color: #000000;
+        text-decoration: none;
     }
 
     .back {
@@ -94,11 +95,12 @@
 <body>
 
 <div class="wrapper">
-
+<a href="../Pages/Pengaturan.html">
     <div class="header">
         <div class="back">&#8592;</div>
-        <div class="title">Ganti Username</div>
+        <div class="title">Ganti Username</div> 
     </div>
+</a>
 
     <div class="card">
         <form>
