@@ -95,14 +95,12 @@
 <body>
 
 <div class="wrapper">
-
+ <a href="../Pages/Pengaturan.html">
     <div class="header">
-        <a href="../Pages/Pengaturan.html">
         <div class="back">&#8592;</div>
-        <div class="title">Ganti Password</div>
-        </a>
+        <div class="title" style="color: black;">Ganti Password</div>  
     </div>
-
+</a>
     <div class="card">
         <form>
             <label>Password Lama</label>
