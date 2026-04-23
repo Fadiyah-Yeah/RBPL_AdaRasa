@@ -1,18 +1,3 @@
-<?php
-include 'Component/konek.php';
-
-// insert pesanan
-$conn->query("INSERT INTO pesanan (nama_produk, jumlah, waktu, tanggal, gambar, status)
-VALUES ('$nama', '$jumlah', '$waktu', CURDATE(), '$gambar', 'diterima')");
-
-// ambil id terakhir
-$id_pesanan = $conn->insert_id;
-
-// buat notifikasi ke dapur
-$conn->query("INSERT INTO notifikasi (id_pesanan, judul, waktu)
-VALUES ($id_pesanan, 'Ada pesanan baru', '$waktu')");
-?>
-
 
 <!DOCTYPE html>
 <html lang="id">
@@ -29,7 +14,7 @@ VALUES ($id_pesanan, 'Ada pesanan baru', '$waktu')");
 
     body {
       margin: 0;
-      background-color: #f5f5f5;
+      background-color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
