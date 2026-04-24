@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <title>Ganti Password</title>
 
 <style>
@@ -95,12 +97,13 @@
 <body>
 
 <div class="wrapper">
- <a href="../Pages/Pengaturan.html">
     <div class="header">
-        <div class="back">&#8592;</div>
+         <a class="back" href="../Pages/Pengaturan.php">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
         <div class="title" style="color: black;">Ganti Password</div>  
     </div>
-</a>
+
     <div class="card">
         <form>
             <label>Password Lama</label>
