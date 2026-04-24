@@ -8,7 +8,7 @@ $back = '../Pages/login.html';
 /* CEK ROLE */
 if(isset($_SESSION['role'])){
     if($_SESSION['role'] == 'admin'){
-        $back = '../Pages/admin.html';
+        $back = '../Pages/admin.php';
     }
     else if($_SESSION['role'] == 'dapur'){
         $back = 'dapur.php'; // karena 1 folder
