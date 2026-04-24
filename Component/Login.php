@@ -54,7 +54,7 @@ if (isset($_POST["login"])) {
                 if ($row['role'] == 'admin') {
                     header("location:../Pages/admin.html");
                 } else if ($row['role'] == 'dapur') {
-                    header("location:../Pages/dapur.html");
+                    header("location:../Pages/dapur.php");
                 } else if ($row['role'] == 'pengantaran') {
                     header("location:../Pages/antar.html");
                 }
