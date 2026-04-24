@@ -2,11 +2,11 @@
 session_start();
 require 'konek.php';
 
-// ================== AMBIL DATA ==================
+//  AMBIL DATA 
 $vendor = mysqli_query($conn, "SELECT DISTINCT nama_vendor, alamat_vendor FROM bahan_baku WHERE nama_vendor IS NOT NULL");
 $bahan = mysqli_query($conn, "SELECT DISTINCT nama_bahan, harga_satuan FROM bahan_baku");
 
-// ================== SIMPAN DATA ==================
+//  SIMPAN DATA 
 if (isset($_POST['submit'])) {
 
     $nama_bahan = $_POST['nama_bahan'];
