@@ -2,16 +2,14 @@
 session_start();
 require 'konek.php';
 
-// ambil data dropdown
-$menu = mysqli_query($conn, "SELECT DISTINCT menu FROM bahan_baku WHERE menu IS NOT NULL");
+// ================== AMBIL DATA ==================
 $vendor = mysqli_query($conn, "SELECT DISTINCT nama_vendor, alamat_vendor FROM bahan_baku WHERE nama_vendor IS NOT NULL");
 $bahan = mysqli_query($conn, "SELECT DISTINCT nama_bahan, harga_satuan FROM bahan_baku");
 
-// simpan data
+// ================== SIMPAN DATA ==================
 if (isset($_POST['submit'])) {
 
     $nama_bahan = $_POST['nama_bahan'];
-    $menu_val = $_POST['menu'];
     $jumlah = $_POST['jumlah'];
     $pakai = $_POST['pakai'];
     $tanggal = $_POST['tanggal'];
@@ -21,15 +19,15 @@ if (isset($_POST['submit'])) {
     $total = $_POST['total'];
 
     mysqli_query($conn, "INSERT INTO bahan_baku 
-    (nama_bahan, menu, jumlah, pakai, tanggal, nama_vendor, alamat_vendor, harga_satuan, total)
+    (nama_bahan, jumlah, pakai, tanggal, nama_vendor, alamat_vendor, harga_satuan, total)
     VALUES 
-    ('$nama_bahan','$menu_val','$jumlah','$pakai','$tanggal','$nama_vendor','$alamat_vendor','$harga','$total')
+    ('$nama_bahan','$jumlah','$pakai','$tanggal','$nama_vendor','$alamat_vendor','$harga','$total')
     ");
 
     if (mysqli_affected_rows($conn) > 0) {
         echo "<script>alert('Data berhasil ditambahkan');</script>";
     } else {
-        echo "Error: " . mysqli_error($conn);
+        echo "<script>alert('Gagal menyimpan data');</script>";
     }
 }
 ?>
@@ -43,7 +41,6 @@ if (isset($_POST['submit'])) {
 <title>Input Bahan Baku</title>
 
 <style>
-/* === CSS ASLI (TIDAK DIUBAH) === */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Aleo', serif; }
 body { background-color: #ffffff; display: flex; justify-content: center; }
 .mobile-container { width: 100%; max-width: 390px; padding: 20px; }
@@ -53,18 +50,25 @@ body { background-color: #ffffff; display: flex; justify-content: center; }
 .card { background: #ffffff; border: 1px solid #000; border-radius: 10px; padding: 18px; }
 label { font-size: 13px; margin-bottom: 6px; display: block; }
 input, select {
-    width: 100%; padding: 8px 10px; border-radius: 7px;
-    border: 1px solid #ccc; background: #ffffff;
-    margin-bottom: 14px; font-size: 13px; outline: none;
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 7px;
+    border: 1px solid #ccc;
+    background: #ffffff;
+    margin-bottom: 14px;
+    font-size: 13px;
+    outline: none;
 }
 .row { display: flex; gap: 10px; }
 .row .col { flex: 1; }
-.date-row { display: flex; gap: 8px; }
-.date-row input { flex: 1; text-align: center; }
 .btn-wrapper { display: flex; justify-content: center; margin-top: 25px; }
 .btn {
-    padding: 8px 40px; border-radius: 20px; border: 1px solid #000;
-    background: #ffffff; cursor: pointer; font-size: 14px;
+    padding: 8px 40px;
+    border-radius: 20px;
+    border: 1px solid #000;
+    background: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
 }
 .btn:hover { background: #ddd; }
 </style>
@@ -85,13 +89,8 @@ input, select {
             <label>Nama bahan</label>
             <input type="text" name="nama_bahan" id="nama_bahan" required>
 
-            <label>Untuk bahan baku apa</label>
-            <select name="menu">
-                <option value="">Value</option>
-                <?php while($m = mysqli_fetch_assoc($menu)) : ?>
-                    <option value="<?= $m['menu']; ?>"><?= $m['menu']; ?></option>
-                <?php endwhile; ?>
-            </select>
+            <label>Untuk Bahan Baku Apa</label>
+            <input type="text" name="nama_bahan" id="nama_bahan" required>
 
             <div class="row">
                 <div class="col">
@@ -110,7 +109,7 @@ input, select {
             <label>Nama Vendor</label>
             <select name="nama_vendor" id="vendor">
                 <option value="">Value</option>
-                <?php while($v = mysqli_fetch_assoc($vendor)) : ?>
+                <?php while ($v = mysqli_fetch_assoc($vendor)) : ?>
                     <option value="<?= $v['nama_vendor']; ?>" data-alamat="<?= $v['alamat_vendor']; ?>">
                         <?= $v['nama_vendor']; ?>
                     </option>
@@ -131,26 +130,25 @@ input, select {
                 </div>
             </div>
 
-        </div>
+    </div>
 
-        <div class="btn-wrapper">
-            <button class="btn" type="submit" name="submit">Tambahkan</button>
-        </div>
+    <div class="btn-wrapper">
+        <button class="btn" type="submit" name="submit">Tambahkan</button>
+    </div>
 
         </form>
 
 </div>
 
 <script>
-// data bahan
+// data bahan dari database
 let bahanData = {
 <?php 
 mysqli_data_seek($bahan, 0);
 while($b = mysqli_fetch_assoc($bahan)) {
     echo "'".$b['nama_bahan']."': ".$b['harga_satuan'].",";
 }
-?>
-};
+?>}
 
 // auto alamat vendor
 document.getElementById("vendor").addEventListener("change", function() {
@@ -158,14 +156,14 @@ document.getElementById("vendor").addEventListener("change", function() {
     document.getElementById("alamat_vendor").value = alamat || "";
 });
 
-// auto harga
+// auto harga bahan
 document.getElementById("nama_bahan").addEventListener("input", function() {
     let harga = bahanData[this.value] || "";
     document.getElementById("harga").value = harga;
     hitungTotal();
 });
 
-// hitung total
+// hitung total otomatis
 document.getElementById("jumlah").addEventListener("input", hitungTotal);
 document.getElementById("harga").addEventListener("input", hitungTotal);
 
