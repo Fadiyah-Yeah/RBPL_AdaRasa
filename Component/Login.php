@@ -21,11 +21,11 @@ if (isset($_COOKIE['k']) && isset($_COOKIE['x'])) {
 // cek apakah sudah login ga usah balik ke login
 if (isset($_SESSION["login"])) {
     if ($_SESSION['role'] == 'admin') {
-        header("location:../Pages/admin.html");
+        header("location:../Pages/admin.php");
     } else if ($_SESSION['role'] == 'dapur') {
         header("location:../Pages/dapur.php");
     } else if ($_SESSION['role'] == 'pengantaran') {
-        header("location:../Pages/antar.php");
+        header("location:../Pages/antar.html");
     }
 }
 
@@ -52,7 +52,7 @@ if (isset($_POST["login"])) {
                 $_SESSION['username'] = $row['username']; 
 
                 if ($row['role'] == 'admin') {
-                    header("location:../Pages/admin.html");
+                    header("location:../Pages/admin.php");
                 } else if ($row['role'] == 'dapur') {
                     header("location:../Pages/dapur.php");
                 } else if ($row['role'] == 'pengantaran') {
