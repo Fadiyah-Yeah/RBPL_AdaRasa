@@ -22,8 +22,14 @@ if(isset($_POST['submit'])){
 
     if(mysqli_affected_rows($conn) > 0){
 
+        // ambil id pesanan terakhir
         $id = mysqli_insert_id($conn);
 
+        // 🔥 TAMBAHKAN INI (NOTIFIKASI)
+        mysqli_query($conn, "INSERT INTO notifikasi (id_pemesanan) 
+        VALUES ('$id')");
+
+        // simpan ke session
         $_SESSION['id_pemesanan'] = $id;
         $_SESSION['jumlah'] = $jumlah;
 
@@ -166,13 +172,17 @@ if(isset($_POST['submit'])){
           <select name="menu" required>
             <option value="">Pilih Menu</option>
             <option value="Nastar">Nastar</option>
+            <option value="Nastar Spesial">Nastar Spesial</option>
             <option value="Kastengel">Kastengel</option>
             <option value="Putri Salju">Putri Salju</option>
             <option value="Kue Kacang">Kue Kacang</option>
             <option value="Choco Chip">Choco Chip</option>
             <option value="Brown Sugar">Brown Sugar</option>
-            <option value="Nasi Box Ayam Panggang">Nasi Box Ayam Panggang</option>
+            <option value="Bolu Pisang">Bolu Pisang</option>
+            <option value="Nasi Box Ayam Panggang Dada">Nasi Box Ayam Panggang Dada</option>
+            <option value="Nasi Box Ayam Panggang Paha">Nasi Box Ayam Panggang Paha</option>
             <option value="Nasi Box Ayam Goreng">Nasi Box Ayam Goreng</option>
+            <option value="Nasi Kuning">Nasi Kuning</option>
           </select>
         </div>
 
