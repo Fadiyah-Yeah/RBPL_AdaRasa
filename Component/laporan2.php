@@ -1,17 +1,43 @@
 <?php
-include 'Component/konek.php';
+session_start();
+require 'konek.php';
 
-$status = $_GET['status'];
+/* ===== AMBIL PERIODE ===== */
+$periode = $_GET['periode'] ?? 'hari';
 
-$query = $conn->query("SELECT * FROM pesanan WHERE status='$status' ORDER BY tanggal DESC");
-
-$data = [];
-
-while($row = $query->fetch_assoc()){
-    $data[] = $row;
+/* ===== FILTER ===== */
+switch($periode){
+  case 'hari':
+    $filter = "DATE(tanggal_pesan)=CURDATE()";
+    break;
+  case 'minggu':
+    $filter = "YEARWEEK(tanggal_pesan,1)=YEARWEEK(CURDATE(),1)";
+    break;
+  case 'bulan':
+    $filter = "MONTH(tanggal_pesan)=MONTH(CURDATE()) AND YEAR(tanggal_pesan)=YEAR(CURDATE())";
+    break;
+  case 'tahun':
+    $filter = "YEAR(tanggal_pesan)=YEAR(CURDATE())";
+    break;
+  default:
+    $filter = "1=1";
 }
 
-echo json_encode($data);
+/* ===== PRODUK ===== */
+$qProduk = $conn->query("
+SELECT menu, SUM(jumlah) as total
+FROM pemesanan
+WHERE $filter
+GROUP BY menu
+");
+
+/* ===== PELANGGAN ===== */
+$qPelanggan = $conn->query("
+SELECT nama_pelanggan, COUNT(*) as total_order
+FROM pemesanan
+WHERE $filter
+GROUP BY nama_pelanggan
+");
 ?>
 
 <!DOCTYPE html>
@@ -19,95 +45,109 @@ echo json_encode($data);
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Aleo:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <title>Detail</title>
 
 <style>
-* {
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+*{box-sizing:border-box;font-family:'Aleo',serif;}
+
+body{
+  margin:0;
+  background:#ffffff;
+  display:flex;
+  justify-content:center;
 }
 
-body {
-  margin: 0;
-  background: #f5f5f5;
-  display: flex;
-  justify-content: center;
+.container{
+  width:100%;
+  max-width:400px;
+  padding:20px;
 }
 
-.container {
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
+.header{
+  display:flex;
+  align-items:center;
+  margin-bottom:15px;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
+.back{
+  margin-right:10px;
+  font-size:20px;
+  cursor:pointer;
 }
 
-.back {
-  margin-right: 10px;
-  font-size: 20px;
+.title{
+  font-weight:600;
+  font-size:16px;
 }
 
-.title {
-  font-weight: bold;
+/* TOP BAR */
+.top-bar{
+  border:1px solid #333;
+  border-radius:12px;
+  padding:10px;
+  margin-bottom:15px;
 }
 
-/* TAB */
-.tabs {
-  display: flex;
-  background: #eee;
-  border-radius: 20px;
-  overflow: hidden;
-  margin: 15px 0;
+.label-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
-.tab {
-  flex: 1;
-  padding: 8px;
-  text-align: center;
-  cursor: pointer;
-  font-size: 13px;
+/* SORT */
+.sort{
+  cursor:pointer;
+  font-size:12px;
 }
 
-.tab.active {
-  background: #8BC34A;
-  color: white;
+/* TOGGLE */
+.toggle{
+  display:flex;
+  border:1px solid #333;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.toggle div{
+  padding:6px 15px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.active{
+  background:#8BC34A;
+  color:white;
 }
 
 /* LIST */
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
 }
 
-.card {
-  background: white;
-  border: 1px solid #333;
-  border-radius: 10px;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.card{
+  background:white;
+  border:1px solid #333;
+  border-radius:12px;
+  padding:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-.text {
-  font-size: 13px;
-}
+.text{font-size:14px;}
+.sub{font-size:12px;color:#555;}
 
-.sub {
-  font-size: 11px;
-  color: #555;
-}
-
-.card img {
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
-  object-fit: cover;
+.card img{
+  width:60px;
+  height:60px;
+  border-radius:10px;
+  object-fit:cover;
 }
 </style>
 </head>
@@ -115,54 +155,104 @@ body {
 <body>
 
 <div class="container">
-  <div class="header">
-    <div class="back">←</div>
-    <div class="title">Detail</div>
-  </div>
 
-  <div class="tabs">
-    <div class="tab active" onclick="loadData('produk', this)">Pesanan</div>
-    <div class="tab" onclick="loadData('pelanggan', this)">Pelanggan</div>
+<div class="header">
+  <div class="back" onclick="history.back()">
+    <i class="fa-solid fa-arrow-left"></i>
   </div>
+  <div class="title">Detail</div>
+</div>
 
-  <div class="list" id="list"></div>
+<div class="top-bar">
+  <div class="label-row">
+    <div class="sort" onclick="toggleSort()">
+      <i class="fa-solid fa-sort"></i> Urutkan
+    </div>
+
+    <div class="toggle">
+      <div id="tabProduk" class="active" onclick="showProduk()">Pesanan</div>
+      <div id="tabPelanggan" onclick="showPelanggan()">Pelanggan</div>
+    </div>
+  </div>
+</div>
+
+<div class="list" id="list"></div>
+
 </div>
 
 <script>
-function setActiveTab(el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
+
+/* ===== DATA ===== */
+const produk = [
+<?php while($p = $qProduk->fetch_assoc()): ?>
+{
+  nama:"<?= $p['menu'] ?>",
+  total:<?= $p['total'] ?>,
+  gambar:"<?= strtolower(str_replace(' ','_',$p['menu'])) ?>.jpg"
+},
+<?php endwhile; ?>
+];
+
+const pelanggan = [
+<?php while($p = $qPelanggan->fetch_assoc()): ?>
+{
+  nama:"<?= $p['nama_pelanggan'] ?>",
+  total:<?= $p['total_order'] ?>,
+  gambar:"user.png"
+},
+<?php endwhile; ?>
+];
+
+let current = "produk";
+let asc = false;
+
+/* ===== RENDER ===== */
+function render(){
+  const container = document.getElementById('list');
+  container.innerHTML='';
+
+  let data = current === "produk" ? [...produk] : [...pelanggan];
+
+  data.sort((a,b)=> asc ? a.total - b.total : b.total - a.total);
+
+  data.forEach(item=>{
+    container.innerHTML += `
+    <div class="card">
+      <div>
+        <div class="text">${item.nama}</div>
+        <div class="sub">${item.total} ${current==="produk"?"pesanan":"order"}</div>
+      </div>
+      <img src="../asset/${item.gambar}" onerror="this.src='../asset/default.png'">
+    </div>
+    `;
+  });
 }
 
-function loadData(type, el) {
-  setActiveTab(el);
-
-  fetch(`get_data.php?type=${type}`)
-    .then(res => res.json())
-    .then(data => {
-
-      const container = document.getElementById('list');
-      container.innerHTML = '';
-
-      data.forEach(item => {
-        container.innerHTML += `
-          <div class="card">
-            <div>
-              <div class="text">${item.nama}</div>
-              <div class="sub">${item.deskripsi || item.alamat}</div>
-            </div>
-            <img src="img/${item.gambar}">
-          </div>
-        `;
-      });
-
-    });
+/* ===== SWITCH ===== */
+function showProduk(){
+  current="produk";
+  document.getElementById('tabProduk').classList.add('active');
+  document.getElementById('tabPelanggan').classList.remove('active');
+  render();
 }
 
-// load default
-loadData('produk', document.querySelector('.tab'));
+function showPelanggan(){
+  current="pelanggan";
+  document.getElementById('tabPelanggan').classList.add('active');
+  document.getElementById('tabProduk').classList.remove('active');
+  render();
+}
+
+/* ===== SORT ===== */
+function toggleSort(){
+  asc = !asc;
+  render();
+}
+
+/* DEFAULT */
+render();
+
 </script>
 
 </body>
 </html>
-
