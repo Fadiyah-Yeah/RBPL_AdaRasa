@@ -212,10 +212,10 @@ input[type="checkbox"] {
         Pesanan
     </a>
 
-    <div class="menu-item">
+    <a class="menu-item" href="../Pages/laporan.html">
         <div class="menu-icon"><i class="fa-solid fa-chart-line"></i></div>
         Laporan
-    </div>
+    </a>
 
     <a class="menu-item" href="../Pages/Pengaturan.php">
         <div class="menu-icon"><i class="fa-solid fa-user"></i></div>
