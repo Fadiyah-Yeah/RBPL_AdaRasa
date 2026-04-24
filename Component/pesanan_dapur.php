@@ -1,222 +1,332 @@
 <?php
-include 'Component/konek.php';
+session_start();
+require 'konek.php';
 
-$status = $_GET['status'];
+/* ===== API MODE ===== */
+if(isset($_GET['action'])){
 
-$query = $conn->query("SELECT * FROM pesanan WHERE status='$status' ORDER BY tanggal DESC");
+  // ambil data
+  if($_GET['action']=='get'){
+    $status=$_GET['status'] ?? '';
 
-$data = [];
+    $q=$conn->query("
+      SELECT * FROM pemesanan 
+      WHERE status='$status' 
+      ORDER BY id_pemesanan DESC
+    ");
 
-while ($row = $query->fetch_assoc()) {
-    $data[] = $row;
-}
+    $data=[];
+    while($r=$q->fetch_assoc()){
+      $data[]=$r;
+    }
 
-echo json_encode($data);
-?>
+    echo json_encode($data);
+    exit;
+  }
 
-<?php
-include 'Component/konek.php';
+  // update status
+  if($_GET['action']=='update'){
+    $id=$_POST['id'];
+    $status=$_POST['status'];
 
-$id = $_POST['id'];
-$newStatus = $_POST['status'];
+    $conn->query("UPDATE pemesanan 
+                  SET status='$status' 
+                  WHERE id_pemesanan=$id");
 
-$get = $conn->query("SELECT status FROM pesanan WHERE id=$id");
-$row = $get->fetch_assoc();
-$current = $row['status'];
-
-$allowed = false;
-
-if ($current == "diterima" && $newStatus == "diproses") {
-    $allowed = true;
-}
-
-if ($current == "diproses" && ($newStatus == "diterima" || $newStatus == "selesai")) {
-    $allowed = true;
-}
-
-if ($current == "selesai" && ($newStatus == "diproses" || $newStatus == "diantar")) {
-    $allowed = true;
-}
-
-if ($current == "diantar") {
-    $allowed = false;
-}
-
-if ($allowed) {
-    $conn->query("UPDATE pesanan SET status='$newStatus' WHERE id=$id");
     echo "success";
-} else {
-    echo "invalid";
+    exit;
+  }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            font-family: Arial;
-            background: #f5f5f5;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-        }
+<!-- ICON -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        .container {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-        }
+<style>
+body{
+  margin:0;
+  background:#ffffff;
+  font-family: Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+}
 
-        .tabs {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 15px;
-        }
+.app{
+  width:100%;
+  max-width:390px;
+  min-height:100vh;
+  background:#ffffff;
+}
 
-        .tab {
-            cursor: pointer;
-            padding-bottom: 5px;
-        }
+.container{
+  padding:20px;
+  padding-bottom:90px;
+}
 
-        .tab.active {
-            border-bottom: 2px solid black;
-        }
+.header{
+  font-size:20px;
+  font-weight:600;
+  margin-bottom:18px;
+}
 
-        .card {
-            background: white;
-            border: 1px solid #333;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
+.tabs{
+  display:flex;
+  gap:25px;
+  margin-bottom:15px;
+}
 
-        .card img {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
-        }
+.tab{
+  font-size:14px;
+  cursor:pointer;
+}
 
-        .btn {
-            background: black;
-            color: white;
-            border-radius: 15px;
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-    </style>
+.tab.active{
+  border-bottom:2px solid black;
+  padding-bottom:3px;
+}
+
+.tanggal{
+  font-size:14px;
+  margin-bottom:10px;
+}
+
+.card{
+  background:white;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 3px 8px rgba(0,0,0,0.12);
+  border:1px solid #e5e5e5;
+  cursor:pointer;
+}
+
+.left{
+  display:flex;
+  gap:12px;
+}
+
+.card img{
+  width:60px;
+  height:60px;
+  border-radius:10px;
+  object-fit:cover;
+}
+
+.text{
+  display:flex;
+  flex-direction:column;
+}
+
+.menu{
+  font-size:14px;
+  font-weight:600;
+}
+
+.detail{
+  font-size:12px;
+  color:#444;
+}
+
+.time{
+  font-size:11px;
+  color:#888;
+}
+
+.btn{
+  background:black;
+  color:white;
+  border:none;
+  border-radius:20px;
+  padding:5px 12px;
+  font-size:12px;
+}
+
+.navbar{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  max-width:390px;
+  background:white;
+  border-top:1px solid #ddd;
+  border-radius:18px 18px 0 0;
+  display:flex;
+  justify-content:space-around;
+  padding:12px 0;
+}
+
+.nav-item{
+  color:#888;
+}
+
+.nav-item.active{
+  color:black;
+}
+</style>
 </head>
 
 <body>
 
-    <div class="container">
-        <h3>Pesanan</h3>
+<div class="app">
 
-        <div class="tabs">
-            <div class="tab active" onclick="loadData('diterima', this)">Diterima</div>
-            <div class="tab" onclick="loadData('diproses', this)">Diproses</div>
-            <div class="tab" onclick="loadData('selesai', this)">Selesai</div>
-        </div>
+<div class="container">
 
-        <div id="list"></div>
-    </div>
+<div class="header">Pesanan</div>
 
-    <script>
-        let currentTab = 'diterima';
+<div class="tabs">
+  <div class="tab active" onclick="loadData('diterima', this)">Diterima</div>
+  <div class="tab" onclick="loadData('diproses', this)">Diproses</div>
+  <div class="tab" onclick="loadData('selesai', this)">Selesai</div>
+</div>
 
-        function setTab(el) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-        }
+<div id="list"></div>
 
-        function getOptions(status) {
-            if (status === 'diterima') {
-                return `<option value="diproses">Diproses</option>`;
-            }
-            if (status === 'diproses') {
-                return `
-      <option value="diterima">Diterima</option>
-      <option value="selesai">Selesai</option>
-    `;
-            }
-            if (status === 'selesai') {
-                return `
-      <option value="diproses">Diproses</option>
-      <option value="diantar">Diantar</option>
-    `;
-            }
-            return '';
-        }
+</div>
 
-        function loadData(status, el) {
-            currentTab = status;
-            setTab(el);
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="nav-item" onclick="go('../Pages/dapur.php')">
+    <i class="fa-regular fa-bell"></i>
+  </div>
 
-            fetch(`get_pesanan.php?status=${status}`)
-                .then(res => res.json())
-                .then(data => {
-                    const container = document.getElementById('list');
-                    container.innerHTML = '';
+  <div class="nav-item active">
+    <i class="fa-regular fa-clipboard"></i>
+  </div>
 
-                    data.forEach(item => {
-                        container.innerHTML += `
-        <div class="card">
-          <div style="display:flex; gap:10px;">
-            <img src="img/${item.gambar}">
-            <div>
-              <div>${item.nama_produk}</div>
-              <div style="font-size:12px;">${item.jumlah}</div>
-              <div style="font-size:11px;">${item.waktu}</div>
-            </div>
+  <div class="nav-item" onclick="go('../Pages/pengaturan.php')">
+    <i class="fa-regular fa-user"></i>
+  </div>
+</div>
+
+</div>
+
+<script>
+
+let currentTab='diterima';
+
+function go(page){
+  window.location.href=page;
+}
+
+function setTab(el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ===== GAMBAR ===== */
+function getGambar(menu){
+
+  menu = menu.toLowerCase();
+
+  if(menu === 'nastar') return 'Nastar.jpg';
+  if(menu === 'nastar spesial') return 'Nastar_Spesial.png';
+  if(menu === 'kastengel') return 'Kastenger.jpg';
+  if(menu === 'putri salju') return 'putri_salju.jpg';
+  if(menu === 'kue kacang') return 'kue_kacang.jpg';
+  if(menu === 'choco chip') return 'choco_chip.jpg';
+  if(menu === 'brown sugar') return 'brown_sugar.jpg';
+  if(menu === 'bolu pisang') return 'Bolu_Pisang.jpg';
+  if(menu === 'nasi box ayam panggang paha') return 'Nasi_Box_Ayam_Panggang_Paha.png';
+  if(menu === 'nasi box ayam panggang dada') return 'Nasi_Box_Ayam_Panggang_Dada.jpg';
+  if(menu === 'nasi box ayam goreng') return 'ayam_goreng.jpg';
+  if(menu === 'nasi kuning') return 'nasi_kuning.png';
+
+  return 'default.png';
+}
+
+/* ===== LOAD DATA ===== */
+function loadData(status, el){
+  currentTab=status;
+  setTab(el);
+
+  fetch(`pesanan_dapur.php?action=get&status=${status}`)
+  .then(res=>res.json())
+  .then(data=>{
+
+    const container=document.getElementById('list');
+    container.innerHTML='';
+
+    if(data.length===0){
+      container.innerHTML="<div>Tidak ada pesanan</div>";
+      return;
+    }
+
+    let tgl=new Date(data[0].tanggal_pesan).toLocaleDateString('id-ID',{
+      weekday:'long',
+      day:'numeric',
+      month:'long'
+    });
+
+    container.innerHTML+=`<div class="tanggal">${tgl}</div>`;
+
+    data.forEach(item=>{
+
+      let jam=new Date(item.tanggal_pesan)
+      .toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+
+      container.innerHTML+=`
+      <div class="card" onclick="openDetail(${item.id_pemesanan})">
+
+        <div class="left">
+          <img src="../asset/${getGambar(item.menu)}" 
+               onerror="this.src='../asset/default.png'">
+
+          <div class="text">
+            <div class="menu">${item.menu}</div>
+            <div class="detail">${item.jumlah}</div>
+            <div class="time">${jam}</div>
           </div>
-
-          <select class="btn" onchange="updateStatus(${item.id}, this.value)">
-            <option selected disabled>${item.status}</option>
-            ${getOptions(item.status)}
-          </select>
         </div>
+
+        <select class="btn" 
+          onclick="event.stopPropagation()" 
+          onchange="updateStatus(${item.id_pemesanan}, this.value)">
+          <option selected disabled>${item.status}</option>
+          ${getOptions(item.status)}
+        </select>
+
+      </div>
       `;
-                    });
-                });
-        }
+    });
 
-        function updateStatus(id, status) {
-            fetch('update_status.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: `id=${id}&status=${status}`
-                })
-                .then(res => res.text())
-                .then(res => {
-                    if (res === 'success') {
-                        loadData(currentTab, document.querySelector('.tab.active'));
-                    } else {
-                        alert("Status tidak valid!");
-                    }
-                });
-        }
+  });
+}
 
-        // default load
-        loadData('diterima', document.querySelector('.tab'));
+/* ===== OPTIONS ===== */
+function getOptions(status){
+  if(status==='diterima') return `<option value="diproses">Diproses</option>`;
+  if(status==='diproses') return `<option value="selesai">Selesai</option>`;
+  if(status==='selesai') return `<option value="diantar">Diantar</option>`;
+  return '';
+}
 
-        const urlParams = new URLSearchParams(window.location.search);
-const highlightId = urlParams.get('highlight');
+/* ===== UPDATE ===== */
+function updateStatus(id,status){
+  fetch('pesanan_dapur.php?action=update',{
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:`id=${id}&status=${status}`
+  })
+  .then(()=>loadData(currentTab, document.querySelector('.tab.active')));
+}
 
-        const isHighlight = item.id == highlightId;
+/* ===== DETAIL ===== */
+function openDetail(id){
+  window.location.href = `deskripsiPesan_dapur.php?id=${id}`;
+}
 
-        container.innerHTML += `
-  <div class="card ${isHighlight ? 'highlight' : ''}">
-`;
-    </script>
+/* LOAD AWAL */
+loadData('diterima', document.querySelector('.tab'));
+
+</script>
 
 </body>
-
 </html>
