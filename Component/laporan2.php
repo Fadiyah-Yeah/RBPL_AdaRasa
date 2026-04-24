@@ -184,8 +184,7 @@ body{
 
 /* ===== DATA ===== */
 const produk = [
-<?php while($p = $qProduk->fetch_assoc()): ?>
-{
+<?php while($p = $qProduk->fetch_assoc()): ?>{
   nama:"<?= $p['menu'] ?>",
   total:<?= $p['total'] ?>,
   gambar:"<?= strtolower(str_replace(' ','_',$p['menu'])) ?>.jpg"
@@ -194,8 +193,7 @@ const produk = [
 ];
 
 const pelanggan = [
-<?php while($p = $qPelanggan->fetch_assoc()): ?>
-{
+<?php while($p = $qPelanggan->fetch_assoc()): ?>{
   nama:"<?= $p['nama_pelanggan'] ?>",
   total:<?= $p['total_order'] ?>,
   gambar:"user.png"
