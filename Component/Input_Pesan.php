@@ -45,6 +45,7 @@ if(isset($_POST['submit'])){
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <title>Input Pemesanan</title>
   <style>
     * {
@@ -154,7 +155,9 @@ if(isset($_POST['submit'])){
 
   <div class="container">
     <div class="header">
-      <a class="back" href="../Pages/admin.html">&#8592;</a>
+      <a class="back" href="../Pages/admin.php">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
       <div class="title">INPUT PEMESANAN</div>
     </div>
 
