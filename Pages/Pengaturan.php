@@ -11,7 +11,7 @@ if(isset($_SESSION['role'])){
         $back = '../Pages/admin.php';
     }
     else if($_SESSION['role'] == 'dapur'){
-        $back = 'dapur.php'; // karena 1 folder
+        $back = 'dapur.php'; 
     }
     else if($_SESSION['role'] == 'pengantaran'){
         $back = 'antar.php';
