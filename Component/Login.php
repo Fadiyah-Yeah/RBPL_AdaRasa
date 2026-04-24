@@ -23,9 +23,9 @@ if (isset($_SESSION["login"])) {
     if ($_SESSION['role'] == 'admin') {
         header("location:../Pages/admin.html");
     } else if ($_SESSION['role'] == 'dapur') {
-        header("location:../Pages/dapur.html");
+        header("location:../Pages/dapur.php");
     } else if ($_SESSION['role'] == 'pengantaran') {
-        header("location:../Pages/antar.html");
+        header("location:../Pages/antar.php");
     }
 }
 
