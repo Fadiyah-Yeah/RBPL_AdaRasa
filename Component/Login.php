@@ -25,7 +25,7 @@ if (isset($_SESSION["login"])) {
     } else if ($_SESSION['role'] == 'dapur') {
         header("location:../Pages/dapur.php");
     } else if ($_SESSION['role'] == 'pengantaran') {
-        header("location:../Pages/antar.html");
+        header("location:../Pages/antar.php");
     }
 }
 
