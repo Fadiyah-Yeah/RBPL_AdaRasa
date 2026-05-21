@@ -5,17 +5,14 @@ require '../Component/konek.php';
 /* ===== API MODE ===== */
 if(isset($_GET['action'])){
 
-  // 🔹 STEP 3 → AMBIL DATA
+  //STEP 3 → AMBIL DATA
   if($_GET['action']=='get'){
-    $q = $conn->query("
-      SELECT n.id, n.status, n.waktu,
-             n.id_pemesanan,
-             p.menu, p.jumlah 
-      FROM notifikasi n
-      JOIN pemesanan p 
-      ON n.id_pemesanan = p.id_pemesanan
-      ORDER BY n.id DESC
-    ");
+    $q = $q = $conn->query("
+SELECT n.*, p.menu as nama_produk, p.jumlah
+FROM notifikasi n
+JOIN pemesanan p ON n.id_pesanan = p.id_pemesanan
+ORDER BY n.id DESC
+");
 
     $data=[];
     while($r=$q->fetch_assoc()){
@@ -26,7 +23,7 @@ if(isset($_GET['action'])){
     exit;
   }
 
-  // 🔥 STEP 4 → TARUH DI SINI
+  //STEP 4 → TARUH DI SINI
   if($_GET['action']=='read'){
     $id = $_POST['id'] ?? 0;
 
@@ -209,7 +206,7 @@ fetch('dapur.php?action=get')
 
 });
 
-function openPesanan(id_notif, id_pesanan){
+function openPesanan(id_notif, id_pemesanan){
 
   fetch('dapur.php?action=read',{
     method:'POST',
@@ -217,7 +214,7 @@ function openPesanan(id_notif, id_pesanan){
     body:`id=${id_notif}`
   });
 
-  window.location.href = `pesanan_dapur.php?highlight=${id_pesanan}`;
+  window.location.href = `pesanan_dapur.php?highlight=${id_pemesanan}`;
 }
 </script>
 
