@@ -26,7 +26,7 @@ if(isset($_POST['submit'])){
         $id = mysqli_insert_id($conn);
 
         // 🔥 TAMBAHKAN INI (NOTIFIKASI)
-        mysqli_query($conn, "INSERT INTO notifikasi (id_pemesanan) 
+        mysqli_query($conn, "INSERT INTO notifikasi (id_pesanan) 
         VALUES ('$id')");
 
         // simpan ke session
