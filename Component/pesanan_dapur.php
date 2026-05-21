@@ -26,16 +26,23 @@ if(isset($_GET['action'])){
 
   // update status
   if($_GET['action']=='update'){
-    $id=$_POST['id'];
-    $status=$_POST['status'];
+  $id=$_POST['id'];
+  $status=$_POST['status'];
 
-    $conn->query("UPDATE pemesanan 
-                  SET status='$status' 
-                  WHERE id_pemesanan=$id");
+  $conn->query("UPDATE pemesanan 
+                SET status='$status' 
+                WHERE id_pemesanan=$id");
 
-    echo "success";
-    exit;
+  if($status=='diantar'){
+    $conn->query("
+      INSERT INTO notifikasi (id_pemesanan, tipe, status, waktu)
+      VALUES ($id, 'antar', 'unread', NOW())
+    ");
   }
+
+  echo "success";
+  exit;
+}
 }
 ?>
 
@@ -172,72 +179,11 @@ body{
   color:black;
 }
 </style>
-
 </head>
-
 <body>
-
 <div class="app">
-
-
 <div class="container">
-
-
-
-
-
 <div class="header">Pesanan</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <div class="tabs">
   <div class="tab active" onclick="loadData('diterima', this)">Diterima</div>
   <div class="tab" onclick="loadData('diproses', this)">Diproses</div>
@@ -353,40 +299,6 @@ function loadData(status, el){
       </div>
       `;
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   });
 }
 
