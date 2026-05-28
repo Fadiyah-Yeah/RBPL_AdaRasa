@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- FONT ALEO -->
+  <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- ICON -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <title>Laporan</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Aleo', serif; /* 🔥 GANTI FONT DI SINI */
+    }
+
+    body {
+      margin: 0;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .back {
+      font-size: 20px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 120px 160px 120px;
+      gap: 12px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #333;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .card:hover {
+      background: #eee;
+    }
+
+    .hari {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .minggu {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+
+    .bulan {
+      grid-column: 1;
+      grid-row: 2 / span 2;
+    }
+
+    .tahun {
+      grid-column: 2;
+      grid-row: 3;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="header">
+     <a class="back" href="admin.php">
+        <i class="fa-solid fa-arrow-left"></i>
+     </a>
+    <div class="title">LAPORAN</div>
+  </div>
+
+  <div class="subtitle">Pilih Periode Analisis</div>
+
+  <div class="grid">
+    <div class="card hari" onclick="go('hari')">1 Hari</div>
+    <div class="card minggu" onclick="go('minggu')">1 Minggu</div>
+    <div class="card bulan" onclick="go('bulan')">1 Bulan</div>
+    <div class="card tahun" onclick="go('tahun')">1 Tahun</div>
+</div>
+
+
+<script>
+function go(period){
+  window.location.href = `../Component/laporan.php?periode=${period}`;
+}
+</script>
+</body>
+</html>
